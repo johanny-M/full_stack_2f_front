@@ -1,0 +1,44 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main  
+pool: my-personal-computer
+
+steps:
+- checkout: self  
+- task: CopyFiles@2
+  inputs:
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/app'  # Copy project files
+
+# Build the Docker image with a commit hash as tag
+- script: |
+    echo "##vso[task.setvariable variable=CommitHash]$(Build.SourceVersion:0:4)"  # Set a variable with the first 4 digits of the commit hash
+  displayName: 'Set Commit Hash Variable'
+
+# Build Docker image
+- task: Docker@2
+  inputs:
+    command: 'build'
+    repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
+    Dockerfile: '$(Build.ArtifactStagingDirectory)/Dockerfile'  # Path to Dockerfile
+    tags: '$(CommitHash)'
+
+# Push Docker image to Docker Hub
+- task: Docker@2
+  inputs:
+    command: 'push'
+    repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
+    tags: '$(CommitHash)'
+
+# Optional: Deploy or SSH to a server to run the image
+# - task: SSH@0
+#   inputs:
+#     sshEndpoint: 'your-ssh-endpoint'  # SSH service connection to VM
+#     runOptions: 'inline'
+#     inline: |
+#       docker pull your-dockerhub-username/your-app-name:$(CommitHash)
+#       docker service update --image your-dockerhub-username/your-app-name:$(CommitHash) your-service-name
