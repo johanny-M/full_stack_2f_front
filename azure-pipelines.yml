@@ -24,7 +24,7 @@ steps:
   inputs:
     command: 'build'
     repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
-    Dockerfile: '$(Build.ArtifactStagingDirectory)/Dockerfile'  # Path to Dockerfile
+    Dockerfile: '$(Build.ArtifactStagingDirectory)/app/Dockerfile'  # Path to Dockerfile
     tags: '$(CommitHash)'
 
 # Push Docker image to Docker Hub
