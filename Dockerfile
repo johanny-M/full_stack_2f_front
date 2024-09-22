@@ -4,7 +4,7 @@ FROM node:16-alpine AS build
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and package-lock.json from root
 COPY package.json package-lock.json ./
 
 # Install dependencies
@@ -22,8 +22,8 @@ FROM node:16-alpine AS production
 # Set working directory
 WORKDIR /app
 
-# Copy only necessary files from build stage
-COPY --from=build /app/next.config.js ./
+# Copy necessary files from build stage
+COPY --from=build /app/next.config.mjs ./
 COPY --from=build /app/package.json ./
 COPY --from=build /app/package-lock.json ./
 COPY --from=build /app/.next ./
