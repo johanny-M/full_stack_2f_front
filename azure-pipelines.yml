@@ -3,6 +3,7 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+# Starter pipeline
 trigger:
 - main  
 pool: my-personal-computer
@@ -20,19 +21,18 @@ steps:
     echo "##vso[task.setvariable variable=shortCommitHash]${shortCommitHash}"
   displayName: 'Set Commit Hash Variable'
 
-
+# Copy files to staging directory
 - task: CopyFiles@2
   inputs:
-   Contents: | 
-      **/*
-   TargetFolder: '$(Build.ArtifactStagingDirectory)' 
+    Contents: '**/*'  # Adjusted for correct syntax
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 # Build Docker image
 - task: Docker@2
   inputs:
     command: 'build'
     repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
-    Dockerfile: '**/Dockerfile'
+    Dockerfile: '$(Build.ArtifactStagingDirectory)/app/Dockerfile'  # Adjusted path to Dockerfile
     buildContext: '$(Build.ArtifactStagingDirectory)/app'  # Path to Dockerfile
     tags: '$(shortCommitHash)'
 
@@ -49,5 +49,5 @@ steps:
 #     sshEndpoint: 'your-ssh-endpoint'  # SSH service connection to VM
 #     runOptions: 'inline'
 #     inline: |
-#       docker pull your-dockerhub-username/your-app-name:$(shortCommitHash)
-#       docker service update --image your-dockerhub-username/your-app-name:$(shortCommitHash) your-service-name
+#       docker pull johannyet/full_stack_2f_frontend:$(shortCommitHash)
+#       docker service update --image johannyet/full_stack_2f_frontend:$(shortCommitHash) your-service-name
