@@ -42,6 +42,7 @@ steps:
     Dockerfile: 'Dockerfile'  # Adjusted path to Dockerfile
     buildContext: '$(Build.SourcesDirectory)/app'  # Path to Dockerfile
     tags: '$(shortCommitHash)'
+    arguments: '--no-cache'
 
 # Push Docker image to Docker Hub
 - task: Docker@2
