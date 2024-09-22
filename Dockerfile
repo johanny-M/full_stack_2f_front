@@ -4,17 +4,17 @@ FROM node:16-alpine AS build
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and yarn.lock
-COPY package.json yarn.lock ./
+# Copy package.json and package-lock.json
+COPY package.json package-lock.json ./
 
-# Install dependencies (frozen lockfile ensures versions match)
-RUN yarn install --frozen-lockfile
+# Install dependencies
+RUN npm install --production
 
 # Copy the rest of the application code
 COPY . .
 
 # Build the Next.js application
-RUN yarn build
+RUN npm run build
 
 # Production stage
 FROM node:16-alpine AS production
@@ -25,15 +25,15 @@ WORKDIR /app
 # Copy only necessary files from build stage
 COPY --from=build /app/next.config.js ./
 COPY --from=build /app/package.json ./
-COPY --from=build /app/yarn.lock ./
+COPY --from=build /app/package-lock.json ./
 COPY --from=build /app/.next ./
 COPY --from=build /app/public ./public
 
 # Install production dependencies
-RUN yarn install --frozen-lockfile --production
+RUN npm install --production
 
 # Expose the application port
 EXPOSE 3000
 
 # Start the Next.js application
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
