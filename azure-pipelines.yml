@@ -9,15 +9,22 @@ pool: my-personal-computer
 
 steps:
 - checkout: self  
+
+# Set the CommitHash (full commit hash)
+- script: |
+    # Extract the last 4 digits of the commit hash
+    shortCommitHash=$(echo $(Build.SourceVersion) | tail -c 5)
+    echo "Using short commit hash: ${shortCommitHash}"
+    
+    # Set the variable for later use in the pipeline
+    echo "##vso[task.setvariable variable=shortCommitHash]${shortCommitHash}"
+  displayName: 'Set Commit Hash Variable'
+
+
 - task: CopyFiles@2
   inputs:
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/app'  # Copy project files
-
-# Build the Docker image with a commit hash as tag
-- script: |
-    echo "##vso[task.setvariable variable=CommitHash]$(Build.SourceVersion:0:4)"  # Set a variable with the first 4 digits of the commit hash
-  displayName: 'Set Commit Hash Variable'
 
 # Build Docker image
 - task: Docker@2
