@@ -21,11 +21,18 @@ steps:
     echo "##vso[task.setvariable variable=shortCommitHash]${shortCommitHash}"
   displayName: 'Set Commit Hash Variable'
 
+
 # Copy files to staging directory
 - task: CopyFiles@2
   inputs:
-    Contents: '**/*'  # Adjusted for correct syntax
+    Contents: '**/*'  
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+  
+
+- script: |
+    echo "Listing contents of $(Build.ArtifactStagingDirectory):"
+    ls -R $(Build.ArtifactStagingDirectory)
+  displayName: 'List Files in Build Context'
 
 # Build Docker image
 - task: Docker@2
