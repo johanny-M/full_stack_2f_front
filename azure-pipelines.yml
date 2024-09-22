@@ -32,7 +32,7 @@ steps:
   inputs:
     command: 'build'
     repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
-    Dockerfile: '$(Build.ArtifactStagingDirectory)/app/Dockerfile'  # Adjusted path to Dockerfile
+    Dockerfile: '**/Dockerfile'  # Adjusted path to Dockerfile
     buildContext: '$(Build.ArtifactStagingDirectory)/app'  # Path to Dockerfile
     tags: '$(shortCommitHash)'
 
