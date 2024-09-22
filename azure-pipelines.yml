@@ -32,14 +32,14 @@ steps:
     command: 'build'
     repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
     Dockerfile: '$(Build.ArtifactStagingDirectory)/app/Dockerfile'  # Path to Dockerfile
-    tags: '$(CommitHash)'
+    tags: '$(shortCommitHash)'
 
 # Push Docker image to Docker Hub
 - task: Docker@2
   inputs:
     command: 'push'
     repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
-    tags: '$(CommitHash)'
+    tags: '$(shortCommitHash)'
 
 # Optional: Deploy or SSH to a server to run the image
 # - task: SSH@0
@@ -47,5 +47,5 @@ steps:
 #     sshEndpoint: 'your-ssh-endpoint'  # SSH service connection to VM
 #     runOptions: 'inline'
 #     inline: |
-#       docker pull your-dockerhub-username/your-app-name:$(CommitHash)
-#       docker service update --image your-dockerhub-username/your-app-name:$(CommitHash) your-service-name
+#       docker pull your-dockerhub-username/your-app-name:$(shortCommitHash)
+#       docker service update --image your-dockerhub-username/your-app-name:$(shortCommitHash) your-service-name
