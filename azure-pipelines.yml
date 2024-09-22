@@ -26,12 +26,12 @@ steps:
 - task: CopyFiles@2
   inputs:
     Contents: '**/*'  
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    TargetFolder: '$(Build.SourcesDirectory)'
   
 
 - script: |
     echo "Listing contents of $(Build.ArtifactStagingDirectory):"
-    ls -R $(Build.ArtifactStagingDirectory)
+    ls -R $(Build.SourcesDirectory)
   displayName: 'List Files in Build Context'
 
 # Build Docker image
@@ -39,8 +39,8 @@ steps:
   inputs:
     command: 'build'
     repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
-    Dockerfile: '**/Dockerfile'  # Adjusted path to Dockerfile
-    buildContext: '$(Build.ArtifactStagingDirectory)/app'  # Path to Dockerfile
+    Dockerfile: 'Dockerfile'  # Adjusted path to Dockerfile
+    buildContext: '$(Build.SourcesDirectory)/app'  # Path to Dockerfile
     tags: '$(shortCommitHash)'
 
 # Push Docker image to Docker Hub
