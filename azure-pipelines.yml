@@ -30,7 +30,7 @@ steps:
   
 
 - script: |
-    echo "Listing contents of $(Build.ArtifactStagingDirectory):"
+    echo "Listing contents of $(Build.SourcesDirectory):"
     ls -R $(Build.SourcesDirectory)
   displayName: 'List Files in Build Context'
 
@@ -40,7 +40,7 @@ steps:
     command: 'build'
     repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
     Dockerfile: 'Dockerfile'  # Adjusted path to Dockerfile
-    buildContext: '$(Build.SourcesDirectory)/app'  # Path to Dockerfile
+    buildContext: '$(Build.SourcesDirectory)'  # Path to Dockerfile
     tags: '$(shortCommitHash)'
     arguments: '--no-cache'
 
