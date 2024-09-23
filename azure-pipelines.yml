@@ -1,0 +1,61 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+# Starter pipeline
+trigger:
+- main  
+pool: my-personal-computer
+
+steps:
+- checkout: self  
+
+# Set the CommitHash (full commit hash)
+- script: |
+    # Extract the last 4 digits of the commit hash
+    shortCommitHash=$(echo $(Build.SourceVersion) | tail -c 5)
+    echo "Using short commit hash: ${shortCommitHash}"
+    
+    # Set the variable for later use in the pipeline
+    echo "##vso[task.setvariable variable=shortCommitHash]${shortCommitHash}"
+  displayName: 'Set Commit Hash Variable'
+
+
+# Copy files to staging directory
+- task: CopyFiles@2
+  inputs:
+    Contents: '**/*'  
+    TargetFolder: '$(Build.SourcesDirectory)'
+  
+
+- script: |
+    echo "Listing contents of $(Build.SourcesDirectory):"
+    ls -R $(Build.SourcesDirectory)
+  displayName: 'List Files in Build Context'
+
+# Build Docker image
+- task: Docker@2
+  inputs:
+    command: 'build'
+    repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
+    Dockerfile: 'Dockerfile'  # Adjusted path to Dockerfile
+    buildContext: '$(Build.SourcesDirectory)'  # Path to Dockerfile
+    tags: '$(shortCommitHash)'
+    arguments: '--no-cache'
+
+# Push Docker image to Docker Hub
+- task: Docker@2
+  inputs:
+    command: 'push'
+    repository: 'johannyet/full_stack_2f_frontend'  # Docker Hub repository
+    tags: '$(shortCommitHash)'
+
+# Optional: Deploy or SSH to a server to run the image
+# - task: SSH@0
+#   inputs:
+#     sshEndpoint: 'your-ssh-endpoint'  # SSH service connection to VM
+#     runOptions: 'inline'
+#     inline: |
+#       docker pull johannyet/full_stack_2f_frontend:$(shortCommitHash)
+#       docker service update --image johannyet/full_stack_2f_frontend:$(shortCommitHash) your-service-name
